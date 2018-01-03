@@ -8,3 +8,5 @@
 3. `make compiled contract="SecretSend"`
 4. `node send-tx`
 
+Todo:
+- add contract address and transaction ID to output
