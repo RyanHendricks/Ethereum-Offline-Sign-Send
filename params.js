@@ -7,9 +7,10 @@ var config = {
     infuraKey: '8oUCPrUo9K5njhj6vbHy',
     // provider: 'http://127.0.0.1:8545',
     provider: 'https://ropsten.infura.io/8oUCPrUo9K5njhj6vbHy',
+    gaslimit: '1250000',
     contractname: 'SecretSend',
-    user1data: "whatever",
-    user2data: "whatever2",
+    user1data: "whatever3",
+    user2data: "whatever1",
     content: "contentordocumentetc"
 };
 exports.config = config;

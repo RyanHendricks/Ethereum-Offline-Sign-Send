@@ -1,13 +1,13 @@
 {
-  "name": "offline-deploy",
+  "name": "ethereum-sign-send",
   "version": "1.0.0",
-  "description": "",
+  "description": "Generate, Sign, and Deploy Ethereum Smart-Contracts",
+  "author": "Ryan Hendricks <ryanhendricks@gmail.com>",
   "main": "README.md",
   "scripts": {
-    "test": "null"
+    "start": "node send-tx.js"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "ethereumjs-abi": "^0.6.5",
     "ethereumjs-tx": "^1.3.3",
