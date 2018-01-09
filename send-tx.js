@@ -57,11 +57,12 @@ console.log("Nonce for Contract Deployment: " + nonce.toString());
 // create a blank transaction
 
 privateKey = new Buffer(params.config.privatekey, 'hex')
+gaslimit = params.config.gaslimit;
 
 var rawTx = {
     nonce: web3.toHex(web3.eth.getTransactionCount(fromAddress)),
     gasPrice: web3.toHex(web3.eth.gasPrice),
-    gasLimit: web3.toHex(3500000),
+    gasLimit: web3.toHex(gaslimit),
     from: web3.toHex(fromAddress),
     data: web3.toHex(contractData)
 };
@@ -69,4 +70,11 @@ var rawTx = {
 var tx = new Tx(rawTx);
 tx.sign(privateKey);
 var serializedTx = tx.serialize();
-return web3.eth.sendRawTransaction("0x" + serializedTx.toString('hex'));
+return web3.eth.sendRawTransaction("0x" + serializedTx.toString('hex'), function(err, result) {
+    if(err) {
+        console.log(err);
+    } else {
+        console.log('-----------> Success :)');
+        console.log('Transaction Hash: ' + result);
+    }
+});
