@@ -7,10 +7,13 @@ var config = {
     infuraKey: '8oUCPrUo9K5njhj6vbHy',
     // provider: 'http://127.0.0.1:8545',
     provider: 'https://ropsten.infura.io/8oUCPrUo9K5njhj6vbHy',
-    gaslimit: '1250000',
-    contractname: 'SecretSend',
-    user1data: "whatever3",
-    user2data: "whatever1",
-    content: "contentordocumentetc"
+    gaslimit: '3500000',
+    contractname: 'CustomToken',
+
+    tokenName: 'MuthaFuckin Token',
+    tokenSymbol: 'MFT',
+    tokenDecimals: '0',
+    tokenSupply: '1618'
+
 };
 exports.config = config;
