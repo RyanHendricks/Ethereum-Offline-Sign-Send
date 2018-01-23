@@ -30,17 +30,17 @@ var bin = fs.readFileSync(binFile).toString()
 var contract = web3.eth.contract(abi);
 ```
 
-Next we pass the desired constructor values from params.js to create data for a new contract.
+Next we pass the desired constructor values from params.js to create data for a new contract.  
+Feel free to modify the token parameters in params.js
 
 ```javascript
 // Set contructor parameters from params file
 // These variables are unique per Contract 
 // ------------------------------------------- //
-var _user1 = params.config.address
-var _user2 = params.config.address2
-var _dataUser1 = params.config.user1data
-var _dataUser2 = params.config.user2data
-var _content = params.config.content
+var _tokenName = params.config.tokenName
+var _tokenSymbol = params.config.tokenSymbol
+var _tokenDecimals = params.config.tokenDecimals
+var _tokenSupply = params.config.tokenSupply
 // ------------------------------------------- //
 
 // combine contract bin with contructor parameters to create contractData
@@ -49,10 +49,6 @@ var contractData = contract.new.getData(
     {data: '0x'+bin}
 );
 
-// Print contractData in console
-console.log('---RAW TXN DATA----')
-console.log(contractData.toString('hex'))
-console.log('--------------------')
 ```
 
 Next, we set the parameters of the transaction to deploy the contract
@@ -81,14 +77,16 @@ var rawTx = {
 var tx = new Tx(rawTx);
 tx.sign(privateKey);
 var serializedTx = tx.serialize();
-return web3.eth.sendRawTransaction("0x" + serializedTx.toString('hex'), function(err, result) {
-    if(err) {
-        console.log(err);
-    } else {
-        console.log('-----------> Success :)');
-        console.log('Transaction Hash: ' + result);
-    }
-});
+
+var shortaddress = params.config.shortaddress;
+
+var count = web3.toHex(nonce);
+var txnCount = (web3.eth.getTransactionCount(fromAddress.toString()));
+
+var rlpEncodedHex = rlp.encode([new Buffer(shortaddress, 'hex'), count]).toString('hex');
+var rlpEncodedWordArray = CryptoJS.enc.Hex.parse(rlpEncodedHex);
+var hash = CryptoJS.SHA3(rlpEncodedWordArray, {outputLength: 256}).toString(CryptoJS.enc.Hex);
+var contractAddress = hash.slice(24);
 ```
 
 ### Disclaimer
