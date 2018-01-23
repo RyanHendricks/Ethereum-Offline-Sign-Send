@@ -56,11 +56,9 @@ var balance = web3.eth.getBalance(fromAddress);
 var nonce = web3.eth.getTransactionCount(fromAddress);
 
 console.log("Contract deployed from: " + fromAddress.toString());
-console.log('--------------------');
 console.log("Current Balance: " + balance.toString());
-console.log('--------------------');
 console.log("Nonce for Contract Deployment: " + nonce.toString());
-console.log('--------------------');
+console.log('--------------------------------------');
 
 // create a blank transaction
 
@@ -79,14 +77,15 @@ var tx = new Tx(rawTx);
 tx.sign(privateKey);
 var serializedTx = tx.serialize();
 
-var rlpEncodedHex = rlp.encode([new Buffer(fromAddress, 'hex'), nonce]).toString('hex');
+var shortaddress = params.config.shortaddress;
+
+var count = web3.toHex(nonce);
+var txnCount = (web3.eth.getTransactionCount(fromAddress.toString()));
+
+var rlpEncodedHex = rlp.encode([new Buffer(shortaddress, 'hex'), count]).toString('hex');
 var rlpEncodedWordArray = CryptoJS.enc.Hex.parse(rlpEncodedHex);
 var hash = CryptoJS.SHA3(rlpEncodedWordArray, {outputLength: 256}).toString(CryptoJS.enc.Hex);
-var address = hash.slice(24);
-console.log('--------------------');
-console.log(address.toString());
-console.log(hash.toString());
-console.log('--------------------');
+var contractAddress = hash.slice(24);
 
 
 
@@ -94,9 +93,12 @@ return web3.eth.sendRawTransaction("0x" + serializedTx.toString('hex'), function
     if(err) {
         console.log(err);
     } else {
-        console.log('-----------> Success :)');
+        console.log('--------------- Success --------------');
+        console.log("Contract Deployed to Address: 0x" + contractAddress.toString());
         console.log('Transaction Hash: ' + result);
+        console.log('--------------------------------------');
         console.log('https://ropsten.etherscan.io/tx/' + result);
-        console.log('--------------------');
+        console.log('https://ropsten.etherscan.io/address/0x' + contractAddress.toString());
+        console.log('--------------------------------------');
     }
 });
