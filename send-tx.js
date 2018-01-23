@@ -3,6 +3,11 @@ var fs = require('fs');
 var Tx = require('ethereumjs-tx');
 var abieth = require('ethereumjs-abi');
 var params = require('./params');
+var coder = require('web3/lib/solidity/coder');
+var rlp = require('rlp');
+var CryptoJS = require('crypto-js');
+var util = require("ethereumjs-util");
+
 
 // initialize web3 and set provider
 var web3 = new Web3();
@@ -25,34 +30,37 @@ var contract = web3.eth.contract(abi);
 // Set contructor parameters from params file
 // These variables are unique per Contract 
 // ------------------------------------------- //
-var _user1 = params.config.address
-var _user2 = params.config.address2
-var _dataUser1 = params.config.user1data
-var _dataUser2 = params.config.user2data
-var _content = params.config.content
+
+var _tokenName = params.config.tokenName
+var _tokenSymbol = params.config.tokenSymbol
+var _tokenDecimals = params.config.tokenDecimals
+var _tokenSupply = params.config.tokenSupply
+
 // ------------------------------------------- //
 
 // combine contract bin with contructor parameters to create contractData
 var contractData = contract.new.getData(
-    _user1, _user2, _dataUser1, _dataUser2, _content,
+    _tokenName, _tokenSymbol, _tokenDecimals, _tokenSupply,
     {data: '0x'+bin}
 );
 
 // Print contractData in console
-console.log('---RAW TXN DATA----')
-console.log(contractData.toString('hex'))
+// console.log('---RAW TXN DATA----')
+// console.log(contractData.toString('hex'))
 console.log('--------------------')
 
 
 var fromAddress = params.config.address;
 var txnCount = web3.eth.getTransactionCount(fromAddress);
 var balance = web3.eth.getBalance(fromAddress);
-var nonce = txnCount + 1;
+var nonce = web3.eth.getTransactionCount(fromAddress);
 
 console.log("Contract deployed from: " + fromAddress.toString());
+console.log('--------------------');
 console.log("Current Balance: " + balance.toString());
-console.log("# of Transactions Sent by Address: " + txnCount.toString());
+console.log('--------------------');
 console.log("Nonce for Contract Deployment: " + nonce.toString());
+console.log('--------------------');
 
 // create a blank transaction
 
@@ -60,7 +68,7 @@ privateKey = new Buffer(params.config.privatekey, 'hex')
 gaslimit = params.config.gaslimit;
 
 var rawTx = {
-    nonce: web3.toHex(web3.eth.getTransactionCount(fromAddress)),
+    nonce: web3.toHex(nonce),
     gasPrice: web3.toHex(web3.eth.gasPrice),
     gasLimit: web3.toHex(gaslimit),
     from: web3.toHex(fromAddress),
@@ -70,11 +78,25 @@ var rawTx = {
 var tx = new Tx(rawTx);
 tx.sign(privateKey);
 var serializedTx = tx.serialize();
+
+var rlpEncodedHex = rlp.encode([new Buffer(fromAddress, 'hex'), nonce]).toString('hex');
+var rlpEncodedWordArray = CryptoJS.enc.Hex.parse(rlpEncodedHex);
+var hash = CryptoJS.SHA3(rlpEncodedWordArray, {outputLength: 256}).toString(CryptoJS.enc.Hex);
+var address = hash.slice(24);
+console.log('--------------------');
+console.log(address.toString());
+console.log(hash.toString());
+console.log('--------------------');
+
+
+
 return web3.eth.sendRawTransaction("0x" + serializedTx.toString('hex'), function(err, result) {
     if(err) {
         console.log(err);
     } else {
         console.log('-----------> Success :)');
         console.log('Transaction Hash: ' + result);
+        console.log('https://ropsten.etherscan.io/tx/' + result);
+        console.log('--------------------');
     }
 });
