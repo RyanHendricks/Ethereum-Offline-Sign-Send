@@ -4,7 +4,7 @@
 
 ### Steps
 
-1. git clone or download this repository
+1. clone or download this repository
 2. `npm install`
 3. `node send-tx`
 
