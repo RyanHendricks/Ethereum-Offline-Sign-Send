@@ -53,7 +53,7 @@ console.log('--------------------')
 var fromAddress = params.config.address;
 var txnCount = web3.eth.getTransactionCount(fromAddress);
 var balance = web3.eth.getBalance(fromAddress);
-var nonce = web3.eth.getTransactionCount(fromAddress);
+var nonce = web3.eth.getTransactionCount(fromAddress, "pending");
 
 console.log("Contract deployed from: " + fromAddress.toString());
 console.log("Current Balance: " + balance.toString());
